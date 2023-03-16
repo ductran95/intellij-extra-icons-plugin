@@ -1,5 +1,5 @@
 name: Build
-on: [ push, pull_request ]
+on: [ push, pull_request, workflow_dispatch ]
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -16,4 +16,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Build and verify
-        run: ./gradlew clean buildPlugin test verifyPlugin verifypluginconfiguration -PpluginVerifyProductDescriptor=true -PpluginIdeaVersion=IC-${{ matrix.ij }} --warning-mode all
+        run: ./gradlew clean buildPlugin test verifyPlugin verifypluginconfiguration -PpluginVerifyProductDescriptor=true -PpluginNeedsLicense=false -PpluginIdeaVersion=IC-${{ matrix.ij }} --warning-mode all
+      - name: Upload build package
+        uses: actions/upload-artifact@v3
+        with:
+          name: package
+          path: ./build/distributions/*.zip
